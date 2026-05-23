@@ -1,0 +1,48 @@
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Gradle
+.gradle/
+build/
+**/build/
+gradle/gradle-daemon-jvm.properties
+
+# Local config (secrets, SDK path)
+local.properties
+keystore.properties
+*.keystore
+*.jks
+
+# HuggingFace tokens
+.hf_token
+.hf-token
+
+# Android build outputs
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Native build
+.externalNativeBuild/
+.cxx/
+
+# Profiling / captures
+captures/
+
+# Room schema (generated, not source of truth)
+app/schemas/
+
+# Superpowers plugin cache
+.superpowers/
+.junie/
+
+# OS
+.DS_Store
+Thumbs.db
+restart-project.sh
+docs/
