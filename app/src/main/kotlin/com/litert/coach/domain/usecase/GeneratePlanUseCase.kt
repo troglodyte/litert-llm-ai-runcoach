@@ -3,6 +3,7 @@ package com.litert.coach.domain.usecase
 import com.litert.coach.ai.CoachModel
 import com.litert.coach.ai.ModelVariant
 import com.litert.coach.ai.PromptBuilder
+import com.litert.coach.ai.PromptHistory
 import com.litert.coach.domain.model.PlannedWorkout
 import com.litert.coach.domain.model.TrainingPlan
 import com.litert.coach.domain.repository.PlanRepository
@@ -17,7 +18,8 @@ class GeneratePlanUseCase @Inject constructor(
     private val planRepo: PlanRepository,
     private val model: CoachModel,
     private val promptBuilder: PromptBuilder,
-    private val historicalAverages: GetHistoricalAveragesUseCase
+    private val historicalAverages: GetHistoricalAveragesUseCase,
+    private val promptHistory: PromptHistory
 ) {
     suspend operator fun invoke() {
         val profile = profileRepo.get() ?: return
@@ -31,10 +33,12 @@ class GeneratePlanUseCase @Inject constructor(
 
         val averages = historicalAverages()
         val prompt = promptBuilder.buildPlanGenerationPrompt(profile, averages)
+        promptHistory.record(prompt, label = "Plan generation")
 
         val rawJson = model.generate(prompt).toList().joinToString("")
         val plan = parsePlan(rawJson) ?: run {
             val retryPrompt = "$prompt\n\nIMPORTANT: Return ONLY the JSON array, nothing else."
+            promptHistory.record(retryPrompt, label = "Plan generation (retry)")
             val retryJson = model.generate(retryPrompt).toList().joinToString("")
             parsePlan(retryJson) ?: return
         }

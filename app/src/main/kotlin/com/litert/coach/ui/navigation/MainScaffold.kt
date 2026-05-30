@@ -23,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.litert.coach.ai.ModelVariant
 import com.litert.coach.ui.chat.ChatScreen
+import com.litert.coach.ui.debug.DebugScreen
 import com.litert.coach.ui.history.HistoryScreen
 import com.litert.coach.ui.plan.PlanScreen
 import com.litert.coach.ui.profile.ProfileScreen
@@ -76,7 +77,12 @@ fun MainScaffold(onNavigateToDownload: (ModelVariant) -> Unit = {}) {
                 })
             }
             composable(Screen.Chat.route) {
-                ChatScreen()
+                ChatScreen(onNavigateToDebug = {
+                    tabNavController.navigate(Screen.PromptDebug.route)
+                })
+            }
+            composable(Screen.PromptDebug.route) {
+                DebugScreen(onBack = { tabNavController.popBackStack() })
             }
             composable(Screen.Tab.History.route) {
                 HistoryScreen()

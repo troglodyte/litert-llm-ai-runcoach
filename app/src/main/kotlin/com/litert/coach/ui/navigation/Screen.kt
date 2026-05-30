@@ -10,6 +10,7 @@ sealed class Screen(val route: String) {
     data object ModelDownloadFromProfile : Screen("model_download_from_profile")
     data object Main : Screen("main")
     data object Chat : Screen("chat")
+    data object PromptDebug : Screen("prompt_debug")
 
     sealed class Tab(route: String) : Screen(route) {
         data object Plan : Tab("tab_plan")

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.litert.coach.ai.CoachModel
 import com.litert.coach.ai.ModelVariant
+import com.litert.coach.ai.PromptHistory
 import com.litert.coach.domain.model.ChatMessage
 import com.litert.coach.domain.repository.ChatRepository
 import com.litert.coach.domain.repository.ProfileRepository
@@ -43,7 +44,8 @@ class ChatViewModel @Inject constructor(
     private val profileRepo: ProfileRepository,
     private val model: CoachModel,
     private val buildPromptContext: BuildPromptContextUseCase,
-    private val summarizeChat: SummarizeChatUseCase
+    private val summarizeChat: SummarizeChatUseCase,
+    private val promptHistory: PromptHistory
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ChatScreenState())
@@ -96,7 +98,9 @@ class ChatViewModel @Inject constructor(
                 }
             }
 
-            val prompt = buildPromptContext() + "\n\nUser: $text\nAssistant:"
+            val contextPrompt = buildPromptContext()
+            val prompt = "$contextPrompt\n\nUser: $text\nAssistant:"
+            promptHistory.record(prompt, label = "User: ${text.take(80)}")
             val responseBuilder = StringBuilder()
 
             runCatching {
